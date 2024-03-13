@@ -67,13 +67,18 @@ class VideosController extends BaseController
             );
             $ids = $this->commandBus->handleWithResult($command);
 
-            return redirect(
+            return $this->redirect(
                 sprintf(
                     '%s?ids=[%s]',
                     route('videos.find'),
-                    implode(',', array_map(static fn(VideoId $id) => sprintf('"%s"', $id->getValue()), $ids->toArray()))
-                ),
-                Response::HTTP_SEE_OTHER
+                    implode(
+                        ',',
+                        array_map(
+                            static fn(VideoId $id) => sprintf('"%s"', $id->getValue()),
+                            $ids->toArray()
+                        )
+                    )
+                )
             );
         }
         $command = new Create($request->isAssignedToDashboard(), $request->getHref(), $catalogsList, $tasksList);
@@ -81,14 +86,7 @@ class VideosController extends BaseController
         /** @var VideoId $id */
         $id = $this->commandBus->handleWithResult($command);
 
-        return redirect(
-            sprintf(
-                '%s?ids=[%s]',
-                route('videos.find'),
-                $id->getValue()
-            ),
-            Response::HTTP_SEE_OTHER
-        );
+        return $this->redirect(sprintf('%s?ids=[%s]', route('videos.find'), $id->getValue()));
     }
 
     public function update(int $id, UpdateRequest $request): RedirectResponse
@@ -115,18 +113,18 @@ class VideosController extends BaseController
             );
         }
 
-        return $this->redirectVideo($id);
+        return $this->redirectToVideo($id);
     }
 
-    private function redirectVideo(int $id): RedirectResponse
+    private function redirectToVideo(int $id): RedirectResponse
     {
-        return redirect()->route('videos.findById', ['id' => $id], Response::HTTP_SEE_OTHER);
+        return $this->redirect('videos.findById', ['id' => $id]);
     }
 
     public function undoFromDashboard(int $id): RedirectResponse
     {
         $this->commandBus->handle(new UpdateAssignedToDashboard(new VideoId($id), false));
 
-        return $this->redirectVideo($id);
+        return $this->redirectToVideo($id);
     }
 }

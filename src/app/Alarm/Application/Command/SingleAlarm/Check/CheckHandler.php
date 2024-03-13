@@ -31,6 +31,7 @@ class CheckHandler extends ModifyAlarmHandler
         }
         $this->eventEmitter->emit(new Updated($alarm));
         $this->notificationsService->deleteNotificationsFromBuff($alarm->getAlarmId());
+
         return true;
     }
 }

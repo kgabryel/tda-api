@@ -3,6 +3,7 @@
 namespace App\Task\Application\Command\SingleTask\ChangeStatus;
 
 use App\Shared\Application\Dto\SingleAlarmsIdsList;
+use App\Shared\Domain\Entity\AlarmId;
 use App\Task\Application\Command\ModifyTaskHandler;
 use App\Task\Application\Query\FindTaskStatusById\FindTaskStatusById;
 use App\Task\Domain\Entity\SingleTask;
@@ -25,17 +26,20 @@ class ChangeStatusHandler extends ModifyTaskHandler
         }
         $alarms = new SingleAlarmsIdsList();
         $checkAlarms = $status->getName() === TaskStatusName::DONE || $status->getName() === TaskStatusName::REJECTED;
+        $alarmId = $task->getAlarmId();
         if (is_array($result)) {
             /** @var SingleTask $subtask */
             foreach ($result as $subtask) {
-                if ($checkAlarms && ($subtask->hasAlarm())) {
-                    $alarms->add($subtask->getAlarmId());
+                if ($checkAlarms && $alarmId !== null) {
+                    /** @var AlarmId $subtaskAlarmId */
+                    $subtaskAlarmId = $subtask->getAlarmId();
+                    $alarms->add($subtaskAlarmId);
                 }
             }
             $this->eventEmitter->emit(new TasksModified($task->getUserId(), ...$result));
         }
-        $alarmId = $task->getAlarmId();
-        if (($alarmId !== null) && $checkAlarms) {
+
+        if ($alarmId !== null && $checkAlarms) {
             $alarms->add($alarmId);
         }
         if (!$alarms->isEmpty()) {

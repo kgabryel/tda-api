@@ -27,7 +27,6 @@ use App\Shared\Domain\Entity\AlarmsGroupId;
 use App\Shared\Domain\Entity\CatalogId;
 use App\Shared\Infrastructure\BaseController;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Response;
 
 class PeriodicAlarmController extends BaseController
 {
@@ -42,7 +41,7 @@ class PeriodicAlarmController extends BaseController
                     $request->getName(),
                     $request->getText(),
                     new CatalogsIdsList(
-                        ...array_map(static fn(string $id) => new CatalogId($id), $request->getCatalogs())
+                        ...array_map(static fn(int $id) => new CatalogId($id), $request->getCatalogs())
                     ),
                     $request->getStart(),
                     $request->getStop(),
@@ -53,13 +52,17 @@ class PeriodicAlarmController extends BaseController
             )
         );
 
-        return redirect(
+        return $this->redirectToAlarm($id);
+    }
+
+    private function redirectToAlarm(string $id): RedirectResponse
+    {
+        return $this->redirect(
             sprintf(
                 '%s?type=%s',
                 route('alarms.findById', ['id' => $id]),
                 AlarmType::PERIODIC_ALARM->value
-            ),
-            Response::HTTP_SEE_OTHER
+            )
         );
     }
 
@@ -76,14 +79,7 @@ class PeriodicAlarmController extends BaseController
             abort(400);
         }
 
-        return redirect(
-            sprintf(
-                '%s?type=%s',
-                route('alarms.findById', ['id' => $id]),
-                AlarmType::PERIODIC_ALARM->value
-            ),
-            Response::HTTP_SEE_OTHER
-        );
+        return $this->redirectToAlarm($id);
     }
 
     public function deactivate(string $id, DeactivateRequest $request): RedirectResponse
@@ -98,14 +94,7 @@ class PeriodicAlarmController extends BaseController
             abort(400);
         }
 
-        return redirect(
-            sprintf(
-                '%s?type=%s',
-                route('alarms.findById', ['id' => $id]),
-                AlarmType::PERIODIC_ALARM->value
-            ),
-            Response::HTTP_SEE_OTHER
-        );
+        return $this->redirectToAlarm($id);
     }
 
     public function activate(string $id, ActivateRequest $request): RedirectResponse
@@ -120,14 +109,7 @@ class PeriodicAlarmController extends BaseController
             abort(400);
         }
 
-        return redirect(
-            sprintf(
-                '%s?type=%s',
-                route('alarms.findById', ['id' => $id]),
-                AlarmType::PERIODIC_ALARM->value
-            ),
-            Response::HTTP_SEE_OTHER
-        );
+        return $this->redirectToAlarm($id);
     }
 
     public function addNotification(string $id, AddNotificationRequest $request): RedirectResponse
@@ -145,13 +127,6 @@ class PeriodicAlarmController extends BaseController
             )
         );
 
-        return redirect(
-            sprintf(
-                '%s?type=%s',
-                route('alarms.findById', ['id' => $id]),
-                AlarmType::PERIODIC_ALARM->value
-            ),
-            Response::HTTP_SEE_OTHER
-        );
+        return $this->redirectToAlarm($id);
     }
 }

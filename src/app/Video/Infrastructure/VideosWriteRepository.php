@@ -16,7 +16,7 @@ class VideosWriteRepository implements WriteRepository
         $vId = $videoId->getValue();
         $uId = $userId->getValue();
 
-        return Cache::remember(sprintf('videos-%s', $vId), static function () use ($vId, $uId) {
+        return Cache::remember(sprintf('videos-%s', $vId), static function() use ($vId, $uId) {
             return VideoModel::where('id', '=', $vId)
                 ->where('user_id', '=', $uId)
                 ->firstOrFail()

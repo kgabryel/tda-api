@@ -28,6 +28,7 @@ class DisableTasks extends Command
     private EventEmitter $eventEmitter;
     private BusUtils $busUtils;
     private UuidInterface $uuid;
+
     public function __construct(
         QueryBus $queryBus,
         CommandBus $commandBus,
@@ -66,6 +67,7 @@ class DisableTasks extends Command
             'id' => $cronId,
             'finish' => true
         ]);
+
         return 0;
     }
 }

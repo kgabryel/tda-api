@@ -41,7 +41,7 @@ class EventsConfig
         }
     }
 
-    public function getAllNameSpaces($path): array
+    public function getAllNameSpaces(string $path): array
     {
         $filenames = $this->getFilenames($path);
         $namespaces = [];
@@ -52,7 +52,7 @@ class EventsConfig
         return $namespaces;
     }
 
-    private function getFilenames($path): array
+    private function getFilenames(string $path): array
     {
         $finderFiles = Finder::create()->files()->in($path)->name('*.php');
         $filenames = [];
@@ -63,21 +63,24 @@ class EventsConfig
         return $filenames;
     }
 
-    private function getFullNamespace($filename): string
+    private function getFullNamespace(string $filename): string
     {
+        /** @var string[] $lines */
         $lines = file($filename);
+        /** @var string[] $array */
         $array = preg_grep('/^namespace /', $lines);
+        /** @var string $namespaceLine */
         $namespaceLine = array_shift($array);
         $match = [];
         preg_match('/^namespace (.*);$/', $namespaceLine, $match);
 
-        return array_pop($match);
+        return (string)array_pop($match);
     }
 
-    private function getClassName($filename): string
+    private function getClassName(string $filename): string
     {
         $directoriesAndFilename = explode('/', $filename);
-        $filename = array_pop($directoriesAndFilename);
+        $filename = (string)array_pop($directoriesAndFilename);
         $nameAndExtension = explode('.', $filename);
 
         return array_shift($nameAndExtension);

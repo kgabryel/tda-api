@@ -23,7 +23,7 @@ class TasksWriteRepository implements TasksWriteRepositoryInterface
         $tId = $taskId->getValue();
         $uId = $userId->getValue();
 
-        return Cache::remember(TaskManager::getCacheKey($taskId), static function () use ($tId, $uId) {
+        return Cache::remember(TaskManager::getCacheKey($taskId), static function() use ($tId, $uId) {
             return Task::select('tasks.*', 'tasks_statuses.name as statusName', 'alarms.id as alarmId')
                 ->join('tasks_statuses', 'tasks_statuses.id', '=', 'tasks.status_id')
                 ->leftJoin('alarms', 'tasks.id', '=', 'alarms.task_id')
@@ -39,7 +39,7 @@ class TasksWriteRepository implements TasksWriteRepositoryInterface
         $tId = $taskId->getValue();
         $uId = $userId->getValue();
 
-        return Cache::remember(TaskManager::getCacheKey($taskId), static function () use ($tId, $uId) {
+        return Cache::remember(TaskManager::getCacheKey($taskId), static function() use ($tId, $uId) {
             return TaskGroup::select('tasks_groups.*', 'alarms_groups.id as alarmId')
                 ->where('tasks_groups.id', '=', $tId)
                 ->leftJoin('alarms_groups', 'tasks_groups.id', '=', 'alarms_groups.task_id')
@@ -53,7 +53,7 @@ class TasksWriteRepository implements TasksWriteRepositoryInterface
     {
         $uId = $userId->getValue();
 
-        return Cache::remember(TaskManager::getCacheKey($taskId), static function () use ($taskId, $uId) {
+        return Cache::remember(TaskManager::getCacheKey($taskId), static function() use ($taskId, $uId) {
             $task = Task::select('tasks.*', 'tasks_statuses.name as statusName', 'alarms.id as alarmId')
                 ->join('tasks_statuses', 'tasks_statuses.id', '=', 'tasks.status_id')
                 ->leftJoin('alarms', 'tasks.id', '=', 'alarms.task_id')
@@ -89,7 +89,7 @@ class TasksWriteRepository implements TasksWriteRepositoryInterface
     {
         return TaskGroup::select('tasks_groups.*', 'alarms_groups.id as alarmId')
             ->where('tasks_groups.active', '=', true)
-            ->where(function ($query) use ($date) {
+            ->where(function($query) use ($date) {
                 $query->whereNull('tasks_groups.stop')->orWhere('tasks_groups.stop', '>=', $date);
             })
             ->leftJoin('alarms_groups', 'tasks_groups.id', '=', 'alarms_groups.task_id')

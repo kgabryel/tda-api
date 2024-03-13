@@ -8,6 +8,7 @@ use App\Shared\Domain\Entity\TaskId;
 use App\Shared\Infrastructure\Request\BasicRequest;
 use App\Shared\Infrastructure\Rules\CorrectMainTaskValue;
 use App\Shared\Infrastructure\Rules\CorrectTaskAlarmValue;
+use App\User\Infrastructure\StringUtils;
 use Carbon\Carbon;
 use DateTimeImmutable;
 
@@ -46,7 +47,7 @@ class UpdateRequest extends BasicRequest
 
     public function getText(): ?string
     {
-        return $this->get('content');
+        return StringUtils::trimContent($this->get('content'));
     }
 
     public function dateFilled(): bool

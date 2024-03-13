@@ -65,7 +65,7 @@ class CatalogsController extends BaseController
         return $this->response->setStatusCode(Response::HTTP_NO_CONTENT);
     }
 
-    public function create(CatalogRequest $request,): RedirectResponse
+    public function create(CatalogRequest $request): RedirectResponse
     {
         $command = new Create(
             $request->getName(),
@@ -86,10 +86,10 @@ class CatalogsController extends BaseController
 
     private function redirectToCatalog(int $id): RedirectResponse
     {
-        return redirect()->route('catalogs.findById', ['id' => $id], Response::HTTP_SEE_OTHER);
+        return $this->redirect('catalogs.findById', ['id' => $id]);
     }
 
-    public function update(int $id, CatalogRequest $request,): RedirectResponse
+    public function update(int $id, CatalogRequest $request): RedirectResponse
     {
         $this->commandBus->handle(new UpdateName(new CatalogId($id), $request->getName()));
         $this->commandBus->handle(

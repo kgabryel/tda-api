@@ -65,7 +65,7 @@ class NotesController extends BaseController
 
     private function redirectToNote(int $id): RedirectResponse
     {
-        return redirect()->route('notes.findById', ['id' => $id], Response::HTTP_SEE_OTHER);
+        return $this->redirect('notes.findById', ['id' => $id]);
     }
 
     public function delete(int $id): Response

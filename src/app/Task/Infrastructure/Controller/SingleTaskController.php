@@ -18,7 +18,6 @@ use App\Task\Infrastructure\Request\Single\CreateRequest;
 use App\Task\Infrastructure\Request\Single\TaskStatusRequest;
 use App\Task\Infrastructure\Request\Single\UpdateRequest;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Response;
 
 class SingleTaskController extends BaseController
 {
@@ -27,13 +26,13 @@ class SingleTaskController extends BaseController
         $id = $uuid->getValue();
         $this->commandBus->handle(new Create($request->getTaskData($id), $request->getAlarmDto($uuid->getValue())));
 
-        return redirect(
-            sprintf(
-                '%s?type=%s',
-                route('tasks.findById', ['id' => $id]),
-                TaskType::SINGLE_TASK->value
-            ),
-            Response::HTTP_SEE_OTHER
+        return $this->redirectToTask($id);
+    }
+
+    private function redirectToTask(string $id): RedirectResponse
+    {
+        return $this->redirect(
+            sprintf('%s?type=%s', route('tasks.findById', ['id' => $id]), TaskType::SINGLE_TASK->value)
         );
     }
 
@@ -41,14 +40,7 @@ class SingleTaskController extends BaseController
     {
         $this->commandBus->handle(new ChangeStatus(new TaskId($id), new StatusId($request->getStatus())));
 
-        return redirect(
-            sprintf(
-                '%s?type=%s',
-                route('tasks.findById', ['id' => $id]),
-                TaskType::SINGLE_TASK->value
-            ),
-            Response::HTTP_SEE_OTHER
-        );
+        return $this->redirectToTask($id);
     }
 
     public function update(string $id, UpdateRequest $request): RedirectResponse
@@ -69,13 +61,6 @@ class SingleTaskController extends BaseController
             $this->commandBus->handle(new UpdateAlarm(new TaskId($id), $request->getAlarm()));
         }
 
-        return redirect(
-            sprintf(
-                '%s?type=%s',
-                route('tasks.findById', ['id' => $id]),
-                TaskType::SINGLE_TASK->value
-            ),
-            Response::HTTP_SEE_OTHER
-        );
+        return $this->redirectToTask($id);
     }
 }

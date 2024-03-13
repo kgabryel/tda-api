@@ -34,13 +34,17 @@ class NotificationController extends BaseController
         /** @var SingleAlarm $alarm */
         $alarm = $this->queryBus->handle(new FindByNotificationId(new NotificationId($id)));
 
-        return redirect(
+        return $this->redirectToAlarm($alarm);
+    }
+
+    private function redirectToAlarm(SingleAlarm|PeriodicAlarm $alarm): RedirectResponse
+    {
+        return $this->redirect(
             sprintf(
                 '%s?type=%s',
                 route('alarms.findById', ['id' => $alarm->getAlarmId()]),
-                AlarmType::SINGLE_ALARM->value
-            ),
-            Response::HTTP_SEE_OTHER
+                $alarm instanceof SingleAlarm ? 'single' : 'periodic'
+            )
         );
     }
 
@@ -50,14 +54,7 @@ class NotificationController extends BaseController
             /** @var SingleAlarm $alarm */
             $alarm = $this->queryBus->handle(new FindByNotificationId(new NotificationId($id)));
 
-            return redirect(
-                sprintf(
-                    '%s?type=%s',
-                    route('alarms.findById', ['id' => $alarm->getAlarmId()]),
-                    AlarmType::SINGLE_ALARM->value
-                ),
-                Response::HTTP_SEE_OTHER
-            );
+            return $this->redirectToAlarm($alarm);
         }
 
         return $this->response->setStatusCode(Response::HTTP_NO_CONTENT);
@@ -65,7 +62,7 @@ class NotificationController extends BaseController
 
     public function delete(int $id, Request $request): Response|RedirectResponse
     {
-        $type = AlarmType::from($request->query('type', ''));
+        $type = AlarmType::from($this->getQueryParam($request, 'type'));
         if ($type === AlarmType::SINGLE_ALARM) {
             /** @var SingleAlarm $alarm */
             $alarm = $this->queryBus->handle(new FindByNotificationId(new NotificationId($id)));
@@ -84,13 +81,6 @@ class NotificationController extends BaseController
             return $this->response->setStatusCode(Response::HTTP_NO_CONTENT);
         }
 
-        return redirect(
-            sprintf(
-                '%s?type=%s',
-                route('alarms.findById', ['id' => $alarm->getAlarmId()]),
-                $type->value
-            ),
-            Response::HTTP_SEE_OTHER
-        );
+        return $this->redirectToAlarm($alarm);
     }
 }

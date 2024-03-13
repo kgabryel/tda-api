@@ -1,0 +1,119 @@
+parameters:
+	level: 8
+	checkGenericClassInNonGenericObjectType: false
+	paths:
+		- app
+	ignoreErrors:
+	    - '#type has no value type specified in iterable type array\.$#'
+	    - '#with no value type specified in iterable type array\.$#'
+	    -
+	        messages:
+	            - '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Builder\|Illuminate\\Database\\Eloquent\\Model\:\:toViewModel\(\)\.$#'
+	            - '#^Call to an undefined static method App\\.+\\Infrastructure\\Model\\.+\:\:where\(\)\.$#'
+	            - '#^Call to an undefined static method App\\.+\\Infrastructure\\Model\\.+\:\:join\(\)\.$#'
+	            - '#^Call to an undefined static method App\\.+\\Infrastructure\\Model\\.+\:\:findOrFail\(\)\.$#'
+	            - '#^Call to an undefined static method App\\.+\\Infrastructure\\Model\\.+\:\:orderBy\(\)\.$#'
+	            - '#^Call to an undefined static method App\\.+\\Infrastructure\\Model\\.+\:\:whereIn\(\)\.$#'
+	            - '#^Call to an undefined static method App\\.+\\Infrastructure\\Model\\.+\:\:select\(\)\.$#'
+	            - '#^Call to an undefined static method App\\.+\\Infrastructure\\Model\\.+\:\:whereDate\(\)\.$#'
+	            - '#^Call to an undefined method Illuminate\\Database\\Query\\Builder\:\:firstOrFail\(\)\.$#'
+	            - '#^Call to an undefined static method App\\.+\\Infrastructure\\Model\\.+\:\:whereNull\(\)\.$#'
+	            - '#^Call to an undefined method object\:\:toViewModel\(\)\.$#'
+	        path: 'app/*/Infrastructure/*Repository.php'
+	    -
+	        message: '#^Call to an undefined static method App\\.+\\Infrastructure\\Model\\.+\:\:where\(\)\.$#'
+	        paths:
+	            - 'app/Shared/Infrastructure/Rules/*.php'
+	            - 'app/Shared/Infrastructure/NotificationTypesUtils.php'
+	            - 'app/Alarm/Infrastructure/Command/SendNotifications/Notification/PushNotification.php'
+	    -
+	        messages:
+	            - '#^Access to an undefined property App\\.+\\Infrastructure\\Model\\.+\:\:\$id\.$#'
+	            - '#^Call to an undefined static method App\\.+\\Infrastructure\\Model\\.+\:\:where\(\)\.$#'
+	            - '#^Call to an undefined static method App\\Alarm\\Infrastructure\\Model\\Notification\:\:find\(\)\.$#'
+	            - '#^Call to an undefined static method App\\Alarm\\Infrastructure\\Model\\Alarm\:\:select\(\)\.$#'
+	        path: 'app/*/Infrastructure/*Manager.php'
+	    -
+	        message: '#^Call to an undefined static method Alaouy\\Youtube\\Facades\\Youtube\:\:#'
+	        path: 'app/Video/Infrastructure/YtService.php'
+	    -
+	        message: '#^Access to an undefined property App\\.+\\Infrastructure\\Request\\.+Request\:\:\$.+\.$#'
+	        path: 'app/*/Infrastructure/Request/*Request.php'
+	    -
+	        message: '#^Access to an undefined property App\\.+\\Infrastructure\\Model\\.+\:\:\$.+\.$#'
+	        path: 'app/*/Infrastructure/Model/*.php'
+	    -
+	        messages:
+	            - '#constructor expects string, string\|null given\.$#'
+	            - '#constructor expects bool, bool\|null given\.$#'
+	        path: 'app/*/Infrastructure/*Controller.php'
+	    -
+	        message: '#^Method App\\User\\Infrastructure\\Model\\User\:\:getSettings\(\) should return App\\User\\Infrastructure\\Model\\Settings but returns object\|null\.$#'
+	        path: 'app/User/Infrastructure/Model/User.php'
+	    -
+	        message: '#^Call to an undefined static method Laravel\\Socialite\\Facades\\Socialite\:\:with\(\)\.$#'
+	        path: 'app/User/Infrastructure/Controller/AuthController.php'
+	    -
+	        message: '#^Cannot call method toDateTimeImmutable\(\) on Carbon\\Carbon\|false\.$#'
+	        paths:
+	            - 'app/Task/Infrastructure/Request/Single/CreateRequest.php'
+	            - 'app/Alarm/Infrastructure/Request/Single/CreateRequest.php'
+	    -
+	        message: '#^Method App\\Task\\Infrastructure\\Model\\TaskGroup\:\:tasks\(\) should return Illuminate\\Database\\Eloquent\\Relations\\HasMany but returns Illuminate\\Database\\Query\\Builder\.$#'
+	        path: 'app/Task/Infrastructure/Model/TaskGroup.php'
+	    -
+	        message: '#^Method App\\Task\\Infrastructure\\Model\\Task\:\:subtasks\(\) should return Illuminate\\Database\\Eloquent\\Relations\\HasMany but returns Illuminate\\Database\\Query\\Builder\.$#'
+	        path: 'app/Task/Infrastructure/Model/Task.php'
+	    -
+	        message: '#^Method App\\Shared\\Infrastructure\\Service\\TranslationService\:\:getTranslation\(\) should return string but returns array\|string\|null\.$#'
+	        path: 'app/Shared/Infrastructure/Service/TranslationService.php'
+	    -
+	        message: '#^Call to an undefined static method Illuminate\\Support\\Facades\\Cache\:\:driver\(\)\.$#'
+	        count: 3
+	        path: 'app/Core/Cache.php'
+	    -
+	        message: '#^Call to an undefined static method Illuminate\\Support\\Facades\\Cache\:\:driver\(\)\.$#'
+	        path: 'app/Core/Cache.php'
+	    -
+	        message: '#^Method App\\Shared\\Infrastructure\\BaseController\:\:getQueryParam\(\) should return string but returns array\|string\|null\.$#'
+	        path: 'app/Shared/Infrastructure/BaseController.php'
+	    -
+	        message: '#^Method App\\File\\Infrastructure\\Request\\UpdateRequest\:\:getFile\(\) should return Illuminate\\Http\\UploadedFile but returns array\<Illuminate\\Http\\UploadedFile\>\|Illuminate\\Http\\UploadedFile\|null\.$#'
+	        path: 'app/File/Infrastructure/Request/UpdateRequest.php'
+	    -
+	        message: '#^Method App\\File\\Infrastructure\\Request\\CreateRequest\:\:getFile\(\) should return Illuminate\\Http\\UploadedFile but returns array\<Illuminate\\Http\\UploadedFile\>\|Illuminate\\Http\\UploadedFile\|null\.$#'
+	        path: 'app/File/Infrastructure/Request/CreateRequest.php'
+	    -
+	        message: '#^Method App\\Shared\\Infrastructure\\Utils\\UserUtils\:\:getLoggedUser\(\) should return App\\User\\Infrastructure\\Model\\User but returns Illuminate\\Contracts\\Auth\\Authenticatable\|null\.$#'
+	        path: 'app/Shared/Infrastructure/Utils/UserUtils.php'
+	    -
+	        message: '#^Call to an undefined method Illuminate\\Contracts\\Auth\\Authenticatable\:\:getId\(\)\.$#'
+	        path: 'app/Core/BusUtils.php'
+	    -
+	        messages:
+	            - '#^Access to an undefined property object\:\:\$notification\.$#'
+	            - '#^Access to an undefined property object\:\:\$userId\.$#'
+	            - '#^Access to an undefined property object\:\:\$emailAvailable\.$#'
+	            - '#^Access to an undefined property object\:\:\$notificationEmail\.$#'
+	            - '#^Access to an undefined property object\:\:\$notification_id\.$#'
+	            - '#^Access to an undefined property object\:\:\$name\.$#'
+	            - '#^Access to an undefined property object\:\:\$time\.$#'
+	            - '#^Access to an undefined property object\:\:\$deactivationCode\.$#'
+	            - '#^Access to an undefined property object\:\:\$taskId\.$#'
+	            - '#^Access to an undefined property object\:\:\$groupId\.$#'
+	            - '#^Access to an undefined property object\:\:\$notificationLang\.$#'
+	            - '#^Access to an undefined property object\:\:\$content\.$#'
+	            - '#^Access to an undefined property object\:\:\$alarmId\.$#'
+	        path: 'app/Alarm/Infrastructure/Command/SendNotifications/NotificationToSend.php'
+	    -
+	        message: '#^Parameter \#1 \$refreshTokenTTL of method League\\OAuth2\\Server\\Grant\\AbstractGrant\:\:setRefreshTokenTTL\(\) expects DateInterval, DateInterval\|Laravel\\Passport\\Passport given\.$#'
+	        path: 'app/Core/Framework/Providers/AuthServiceProvider.php'
+	    -
+	        message: '#^Call to an undefined method object\:\:handle\(\)\.$#'
+	        path: 'app/Core/Cqrs/*Bus.php'
+	    -
+	        message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Builder\|\(Illuminate\\Database\\Eloquent\\Collection&iterable\<Illuminate\\Database\\Eloquent\\Builder\>\)\|Illuminate\\Database\\Eloquent\\Model\:\:toDomainModel\(\)\.$#'
+	        path: 'app/Alarm/Infrastructure/Dto/NotificationList.php'
+	    -
+	        message: '#^Parameter \#1 \$objectOrClass of class ReflectionClass constructor expects class\-string\<T of object\>\|T of object, string given\.$#'
+	        path: 'app/Core/Cqrs/EventsConfig.php'

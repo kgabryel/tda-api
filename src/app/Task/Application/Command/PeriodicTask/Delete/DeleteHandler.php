@@ -2,6 +2,7 @@
 
 namespace App\Task\Application\Command\PeriodicTask\Delete;
 
+use App\Shared\Domain\Entity\AlarmsGroupId;
 use App\Task\Application\Command\ModifyTaskHandler;
 use App\Task\Domain\Entity\PeriodicTask;
 use App\Task\Domain\Event\AlarmsGroupsModified;
@@ -23,7 +24,7 @@ class DeleteHandler extends ModifyTaskHandler
         $alarmId = $this->task->getAlarmId();
         if ($this->task->delete()) {
             if ($alarmId !== null) {
-                $this->modifyAlarm();
+                $this->modifyAlarm($alarmId);
             }
             $this->modifyTasks();
             $this->eventEmitter->emit(new Removed($this->task));
@@ -31,9 +32,8 @@ class DeleteHandler extends ModifyTaskHandler
         }
     }
 
-    private function modifyAlarm(): void
+    private function modifyAlarm(AlarmsGroupId $alarmId): void
     {
-        $alarmId = $this->task->getAlarmId();
         if ($this->command->deleteAlarm()) {
             $this->eventEmitter->emit(new PeriodicAlarmDeleted($alarmId));
         } else {

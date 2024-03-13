@@ -38,7 +38,7 @@ class CreatedOrRemovedHandler
         $this->eventEmitter->emit(
             new CatalogsAssigmentChanged(
                 $event->getTask()->getUserId(),
-                ...array_map(static fn(string $id) => new CatalogId($id), $catalogs)
+                ...array_map(static fn(int $id) => new CatalogId($id), $catalogs)
             )
         );
         $this->eventEmitter->emit(

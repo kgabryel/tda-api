@@ -12,7 +12,7 @@ use App\Task\Application\Command\SingleTask\ModifySingleTaskCommand;
 #[CommandHandler(UpdateContentHandler::class)]
 class UpdateContent extends ModifySingleTaskCommand
 {
-    private string $content;
+    private ?string $content;
 
     public function __construct(TaskId $id, ?string $content)
     {

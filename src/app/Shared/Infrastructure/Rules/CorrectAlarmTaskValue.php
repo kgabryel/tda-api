@@ -31,11 +31,12 @@ class CorrectAlarmTaskValue implements Rule
         /** @var SingleTask $task */
         $task = $this->queryBus->handle(new FindById($value, QueryResult::DOMAIN_MODEL));
 
-        if (!$task->hasAlarm()) {
+        $alarmId = $task->getAlarmId();
+        if ($alarmId === null) {
             return true;
         }
 
-        return $task->getAlarmId()->getValue() === $this->request->route('id');
+        return $alarmId->getValue() === $this->request->route('id');
     }
 
     public function message(): string

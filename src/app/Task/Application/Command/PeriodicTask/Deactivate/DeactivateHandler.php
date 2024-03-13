@@ -18,13 +18,14 @@ class DeactivateHandler extends ModifyTaskHandler
             return false;
         }
         $this->eventEmitter->emit(new Updated($task));
-        if ($command->getAction() === DeactivateAction::NOT_MODIFY && $task->hasAlarm()) {
-            $this->eventEmitter->emit(new AlarmDeactivated($task->getAlarmId(), $command->getAction()->value));
+        $alarmId = $task->getAlarmId();
+        if ($alarmId !== null && $command->getAction() === DeactivateAction::NOT_MODIFY) {
+            $this->eventEmitter->emit(new AlarmDeactivated($alarmId, $command->getAction()->value));
 
             return true;
         }
-        if ($command->getAction() === DeactivateAction::DELETE && $task->hasAlarm()) {
-            $this->eventEmitter->emit(new AlarmDeactivated($task->getAlarmId(), $command->getAction()->value));
+        if ($alarmId !== null && $command->getAction() === DeactivateAction::DELETE) {
+            $this->eventEmitter->emit(new AlarmDeactivated($alarmId, $command->getAction()->value));
         }
 
         $tasksInFuture = $task->getTasksInFuture();
@@ -37,8 +38,8 @@ class DeactivateHandler extends ModifyTaskHandler
             $doneStatus = $this->queryBus->handle(new FindTaskStatusByName(TaskStatus::DONE));
             $undoneStatus = $this->queryBus->handle(new FindTaskStatusByName(TaskStatus::UNDONE));
             $tasksInFuture->reject($rejectStatus, $doneStatus, $undoneStatus);
-            if ($task->hasAlarm()) {
-                $this->eventEmitter->emit(new AlarmDeactivated($task->getAlarmId(), 'deactivate'));
+            if ($alarmId !== null) {
+                $this->eventEmitter->emit(new AlarmDeactivated($alarmId, 'deactivate'));
             }
         }
         $this->eventEmitter->emit(new TasksModified($task->getUserId(), ...$ids));

@@ -10,11 +10,21 @@ use App\Shared\Application\Dto\CatalogsIdsList;
 use App\Shared\Application\IntervalType;
 use App\Shared\Domain\Config;
 use App\Shared\Domain\Entity\AlarmsGroupId;
+use App\Shared\Domain\Entity\BookmarkId;
 use App\Shared\Domain\Entity\CatalogId;
+use App\Shared\Domain\Entity\FileId;
+use App\Shared\Domain\Entity\NoteId;
+use App\Shared\Domain\Entity\TasksGroupId;
+use App\Shared\Domain\Entity\VideoId;
 use App\Shared\Infrastructure\NotificationTypesUtils;
 use App\Shared\Infrastructure\Request\BasicRequest;
 use App\Shared\Infrastructure\Utils\UserUtils;
 use App\Task\Application\Command\PeriodicTask\Create\AlarmDto;
+use App\Task\Application\Command\PeriodicTask\Create\TaskDto;
+use App\Task\Application\Dto\BookmarksList;
+use App\Task\Application\Dto\FilesList;
+use App\Task\Application\Dto\NotesList;
+use App\Task\Application\Dto\VideosList;
 use App\User\Infrastructure\StringUtils;
 use Carbon\Carbon;
 use DateTimeImmutable;
@@ -80,65 +90,6 @@ class CreateRequest extends BasicRequest
         ];
     }
 
-    public function getCatalogs(): array
-    {
-        return $this->task['catalogs'];
-    }
-
-    public function getVideos(): array
-    {
-        return $this->task['videos'];
-    }
-
-    public function getBookmarks(): array
-    {
-        return $this->task['bookmarks'];
-    }
-
-    public function getNotes(): array
-    {
-        return $this->task['notes'];
-    }
-
-    public function getFiles(): array
-    {
-        return $this->task['files'];
-    }
-
-    public function getName(): string
-    {
-        return $this->task['name'];
-    }
-
-    public function getText(): ?string
-    {
-        return StringUtils::trimContent($this->task['content']);
-    }
-
-    public function getInterval(): int
-    {
-        return $this->task['interval'];
-    }
-
-    public function getIntervalType(): IntervalType
-    {
-        return IntervalType::from($this->task['intervalType']);
-    }
-
-    public function getStart(): DateTimeImmutable
-    {
-        return (new Carbon($this->task['start']))->toDateTimeImmutable();
-    }
-
-    public function getStop(): ?DateTimeImmutable
-    {
-        if ($this->task['stop'] === null) {
-            return null;
-        }
-
-        return (new Carbon($this->task['stop']))->toDateTimeImmutable();
-    }
-
     public function getAlarmDto(string $alarmId): ?AlarmDto
     {
         if (!$this->hasAlarm()) {
@@ -150,11 +101,11 @@ class CreateRequest extends BasicRequest
             $this->alarm['name'],
             StringUtils::trimContent($this->alarm['content']),
             new CatalogsIdsList(
-                ...array_map(static fn(string $id) => new CatalogId($id), $this->alarm['catalogs'])
+                ...array_map(static fn(int $id) => new CatalogId($id), $this->alarm['catalogs'])
             ),
             new Notifications(
                 new AlarmsGroupId($alarmId),
-                ...$this->getNotifications($alarmId)
+                ...$this->getNotifications()
             )
         );
     }
@@ -181,5 +132,82 @@ class CreateRequest extends BasicRequest
             ),
             $this->alarm['notifications']
         );
+    }
+
+    public function getTaskData(string $id): TaskDto
+    {
+        return new TaskDto(
+            new TasksGroupId($id),
+            $this->getName(),
+            $this->getText(),
+            new CatalogsIdsList(...array_map(static fn(int $id) => new CatalogId($id), $this->getCatalogs())),
+            new FilesList(...array_map(static fn(int $id) => new FileId($id), $this->getFiles())),
+            new NotesList(...array_map(static fn(int $id) => new NoteId($id), $this->getNotes())),
+            new VideosList(...array_map(static fn(int $id) => new VideoId($id), $this->getVideos())),
+            new BookmarksList(...array_map(static fn(int $id) => new BookmarkId($id), $this->getBookmarks())),
+            $this->getStart(),
+            $this->getStop(),
+            $this->getInterval(),
+            $this->getIntervalType()
+        );
+    }
+
+    public function getName(): string
+    {
+        return $this->task['name'];
+    }
+
+    public function getText(): ?string
+    {
+        return StringUtils::trimContent($this->task['content']);
+    }
+
+    public function getCatalogs(): array
+    {
+        return $this->task['catalogs'];
+    }
+
+    public function getFiles(): array
+    {
+        return $this->task['files'];
+    }
+
+    public function getNotes(): array
+    {
+        return $this->task['notes'];
+    }
+
+    public function getVideos(): array
+    {
+        return $this->task['videos'];
+    }
+
+    public function getBookmarks(): array
+    {
+        return $this->task['bookmarks'];
+    }
+
+    public function getStart(): DateTimeImmutable
+    {
+        return (new Carbon($this->task['start']))->toDateTimeImmutable();
+    }
+
+    public function getStop(): ?DateTimeImmutable
+    {
+        if ($this->task['stop'] === null) {
+            return null;
+        }
+
+        return (new Carbon($this->task['stop']))->toDateTimeImmutable();
+    }
+
+    public function getInterval(): int
+    {
+        return $this->task['interval'];
+    }
+
+    public function getIntervalType(): IntervalType
+    {
+        return IntervalType::from($this->task['intervalType']);
     }
 }

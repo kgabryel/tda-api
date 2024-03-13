@@ -12,6 +12,7 @@ use App\Alarm\Domain\Event\SingleAlarm\AlarmsModified;
 use App\Core\Cqrs\CommandBus;
 use App\Core\Cqrs\EventEmitter;
 use App\Core\Cqrs\QueryBus;
+use DateTimeImmutable;
 
 class AddNotificationHandler extends ModifyAlarmHandler
 {
@@ -43,12 +44,14 @@ class AddNotificationHandler extends ModifyAlarmHandler
         $alarms = $alarm->getAlarmsIds();
         foreach ($alarms as $alarmId) {
             $singleAlarm = $this->getSingleAlarm($alarmId);
+            /** @var DateTimeImmutable $notificationTime */
+            $notificationTime = $singleAlarm->getDate()?->modify(sprintf('%s seconds', $time));
             $this->commandBus->handle(
                 new AddSingleAlarmNotification(
                     new SingleAlarmNotificationDto(
                         $alarmId,
                         new Notification(
-                            $singleAlarm->getDate()?->modify(sprintf('%s seconds', $time)),
+                            $notificationTime,
                             $notification->getTypesList(),
                             $notificationGroup->getNotificationId()
                         )

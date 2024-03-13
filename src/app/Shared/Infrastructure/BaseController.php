@@ -6,6 +6,7 @@ use App\Core\Controller;
 use App\Core\Cqrs\CommandBus;
 use App\Core\Cqrs\QueryBus;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
 class BaseController extends Controller
@@ -20,8 +21,13 @@ class BaseController extends Controller
         $this->commandBus = $commandBus;
     }
 
-    protected function redirect(string $url, array $params): RedirectResponse
+    protected function redirect(string $url, array $params = []): RedirectResponse
     {
-        return redirect()->route($url, $params, Response::HTTP_SEE_OTHER);
+        return new RedirectResponse(route($url, $params), Response::HTTP_SEE_OTHER);
+    }
+
+    protected function getQueryParam(Request $request, string $key): string
+    {
+        return $request->query($key, '');
     }
 }

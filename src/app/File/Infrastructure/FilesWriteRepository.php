@@ -16,7 +16,7 @@ class FilesWriteRepository implements WriteRepository
         $fId = $fileId->getValue();
         $uId = $userId->getValue();
 
-        return Cache::remember(FileManager::getCacheKey($fileId), static function () use ($fId, $uId) {
+        return Cache::remember(FileManager::getCacheKey($fileId), static function() use ($fId, $uId) {
             return FileModel::where('id', '=', $fId)
                 ->where('user_id', '=', $uId)
                 ->firstOrFail()

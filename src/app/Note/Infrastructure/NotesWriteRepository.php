@@ -16,7 +16,7 @@ class NotesWriteRepository implements WriteRepository
         $nId = $noteId->getValue();
         $uId = $userId->getValue();
 
-        return Cache::remember(NoteManager::getCacheKey($noteId), static function () use ($nId, $uId) {
+        return Cache::remember(NoteManager::getCacheKey($noteId), static function() use ($nId, $uId) {
             return NoteModel::where('id', '=', $nId)
                 ->where('user_id', '=', $uId)
                 ->firstOrFail()

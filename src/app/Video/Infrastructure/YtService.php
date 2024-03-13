@@ -19,7 +19,8 @@ class YtService implements YtServiceInterface
 
     private static function modifyHref(string $href): string
     {
-        if ($start = stripos($href, 'youtube')) {
+        $start = stripos($href, 'youtube');
+        if ($start !== false) {
             return sprintf('https://www.%s', substr($href, $start));
         }
 
@@ -51,7 +52,10 @@ class YtService implements YtServiceInterface
             throw new InvalidURLException(sprintf('%s does not contain a %s parameter.', $url, $parameterName));
         }
 
-        return $parameters[$parameterName];
+        /** @var string $parameter */
+        $parameter = $parameters[$parameterName];
+
+        return $parameter;
     }
 
     public function isPlaylist(string $href): bool

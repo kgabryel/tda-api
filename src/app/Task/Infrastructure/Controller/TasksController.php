@@ -50,7 +50,11 @@ class TasksController extends BaseController
         Request $request
     ): SingleTaskEntity|SingleTaskView|PeriodicTaskEntity|PeriodicTaskView {
         return $this->queryBus->handle(
-            new FindById($id, QueryResult::VIEW_MODEL, TaskType::tryFrom($request->query('type', '')))
+            new FindById(
+                $id,
+                QueryResult::VIEW_MODEL,
+                TaskType::tryFrom($this->getQueryParam($request, 'type'))
+            )
         );
     }
 
@@ -71,22 +75,16 @@ class TasksController extends BaseController
 
     public function delete(string $id, Request $request): Response
     {
+        $deleteTasks = $this->getQueryParam($request, 'deleteTasks') === 'true';
+        $deleteAlarm = $this->getQueryParam($request, 'deleteAlarm') === 'true';
         $task = $this->queryBus->handle(new FindById($id, QueryResult::DOMAIN_MODEL));
         if ($task instanceof SingleTaskEntity) {
             $this->commandBus->handle(
-                new DeleteSingleTask(
-                    new TaskId($id),
-                    $request->query('deleteTasks') === 'true',
-                    $request->query('deleteAlarm') === 'true'
-                )
+                new DeleteSingleTask(new TaskId($id), $deleteTasks, $deleteAlarm)
             );
         } else {
             $this->commandBus->handle(
-                new DeletePeriodicTask(
-                    new TasksGroupId($id),
-                    $request->query('deleteTasks') === 'true',
-                    $request->query('deleteAlarm') === 'true'
-                )
+                new DeletePeriodicTask(new TasksGroupId($id), $deleteTasks, $deleteAlarm)
             );
         }
 
@@ -100,15 +98,20 @@ class TasksController extends BaseController
         } catch (AssignedTaskModified) {
             abort(400);
         }
-        $task = $this->queryBus->handle(new FindById($taskId, QueryResult::DOMAIN_MODEL));
 
-        return redirect(
+        return $this->redirectToTask($taskId);
+    }
+
+    private function redirectToTask(string $id): RedirectResponse
+    {
+        $task = $this->queryBus->handle(new FindById($id, QueryResult::DOMAIN_MODEL));
+
+        return $this->redirect(
             sprintf(
                 '%s?type=%s',
-                route('tasks.findById', ['id' => $taskId]),
-                $task instanceof SingleTaskEntity ? TaskType::SINGLE_TASK->value : TaskType::PERIODIC_TASK->value
-            ),
-            Response::HTTP_SEE_OTHER
+                route('tasks.findById', ['id' => $task->getTaskId()]),
+                $task instanceof SingleTaskEntity ? 'single' : 'periodic'
+            )
         );
     }
 
@@ -119,16 +122,8 @@ class TasksController extends BaseController
         } catch (AssignedTaskModified) {
             abort(400);
         }
-        $alarm = $this->queryBus->handle(new FindById($taskId, QueryResult::DOMAIN_MODEL));
 
-        return redirect(
-            sprintf(
-                '%s?type=%s',
-                route('tasks.findById', ['id' => $taskId]),
-                $alarm instanceof SingleTaskEntity ? 'single' : 'periodic'
-            ),
-            Response::HTTP_SEE_OTHER
-        );
+        return $this->redirectToTask($taskId);
     }
 
     public function removeNote(string $taskId, int $noteId): RedirectResponse
@@ -138,16 +133,8 @@ class TasksController extends BaseController
         } catch (AssignedTaskModified) {
             abort(400);
         }
-        $task = $this->queryBus->handle(new FindById($taskId, QueryResult::DOMAIN_MODEL));
 
-        return redirect(
-            sprintf(
-                '%s?type=%s',
-                route('tasks.findById', ['id' => $taskId]),
-                $task instanceof SingleTaskEntity ? TaskType::SINGLE_TASK->value : TaskType::PERIODIC_TASK->value
-            ),
-            Response::HTTP_SEE_OTHER
-        );
+        return $this->redirectToTask($taskId);
     }
 
     public function addNote(string $taskId, NoteRequest $request): RedirectResponse
@@ -157,16 +144,8 @@ class TasksController extends BaseController
         } catch (AssignedTaskModified) {
             abort(400);
         }
-        $alarm = $this->queryBus->handle(new FindById($taskId, QueryResult::DOMAIN_MODEL));
 
-        return redirect(
-            sprintf(
-                '%s?type=%s',
-                route('tasks.findById', ['id' => $taskId]),
-                $alarm instanceof SingleTaskEntity ? 'single' : 'periodic'
-            ),
-            Response::HTTP_SEE_OTHER
-        );
+        return $this->redirectToTask($taskId);
     }
 
     public function removeBookmark(string $taskId, int $bookmarkId): RedirectResponse
@@ -176,16 +155,8 @@ class TasksController extends BaseController
         } catch (AssignedTaskModified) {
             abort(400);
         }
-        $task = $this->queryBus->handle(new FindById($taskId, QueryResult::DOMAIN_MODEL));
 
-        return redirect(
-            sprintf(
-                '%s?type=%s',
-                route('tasks.findById', ['id' => $taskId]),
-                $task instanceof SingleTaskEntity ? TaskType::SINGLE_TASK->value : TaskType::PERIODIC_TASK->value
-            ),
-            Response::HTTP_SEE_OTHER
-        );
+        return $this->redirectToTask($taskId);
     }
 
     public function addBookmark(string $taskId, BookmarkRequest $request): RedirectResponse
@@ -195,16 +166,8 @@ class TasksController extends BaseController
         } catch (AssignedTaskModified) {
             abort(400);
         }
-        $alarm = $this->queryBus->handle(new FindById($taskId, QueryResult::DOMAIN_MODEL));
 
-        return redirect(
-            sprintf(
-                '%s?type=%s',
-                route('tasks.findById', ['id' => $taskId]),
-                $alarm instanceof SingleTaskEntity ? 'single' : 'periodic'
-            ),
-            Response::HTTP_SEE_OTHER
-        );
+        return $this->redirectToTask($taskId);
     }
 
     public function removeFile(string $taskId, int $fileId): RedirectResponse
@@ -214,16 +177,8 @@ class TasksController extends BaseController
         } catch (AssignedTaskModified) {
             abort(400);
         }
-        $task = $this->queryBus->handle(new FindById($taskId, QueryResult::DOMAIN_MODEL));
 
-        return redirect(
-            sprintf(
-                '%s?type=%s',
-                route('tasks.findById', ['id' => $taskId]),
-                $task instanceof SingleTaskEntity ? TaskType::SINGLE_TASK->value : TaskType::PERIODIC_TASK->value
-            ),
-            Response::HTTP_SEE_OTHER
-        );
+        return $this->redirectToTask($taskId);
     }
 
     public function addFile(string $taskId, FileRequest $request): RedirectResponse
@@ -233,16 +188,8 @@ class TasksController extends BaseController
         } catch (AssignedTaskModified) {
             abort(400);
         }
-        $alarm = $this->queryBus->handle(new FindById($taskId, QueryResult::DOMAIN_MODEL));
 
-        return redirect(
-            sprintf(
-                '%s?type=%s',
-                route('tasks.findById', ['id' => $taskId]),
-                $alarm instanceof SingleTaskEntity ? 'single' : 'periodic'
-            ),
-            Response::HTTP_SEE_OTHER
-        );
+        return $this->redirectToTask($taskId);
     }
 
     public function removeVideo(string $taskId, int $videoId): RedirectResponse
@@ -252,16 +199,8 @@ class TasksController extends BaseController
         } catch (AssignedTaskModified) {
             abort(400);
         }
-        $task = $this->queryBus->handle(new FindById($taskId, QueryResult::DOMAIN_MODEL));
 
-        return redirect(
-            sprintf(
-                '%s?type=%s',
-                route('tasks.findById', ['id' => $taskId]),
-                $task instanceof SingleTaskEntity ? TaskType::SINGLE_TASK->value : TaskType::PERIODIC_TASK->value
-            ),
-            Response::HTTP_SEE_OTHER
-        );
+        return $this->redirectToTask($taskId);
     }
 
     public function addVideo(string $taskId, VideoRequest $request): RedirectResponse
@@ -271,15 +210,7 @@ class TasksController extends BaseController
         } catch (AssignedTaskModified) {
             abort(400);
         }
-        $alarm = $this->queryBus->handle(new FindById($taskId, QueryResult::DOMAIN_MODEL));
 
-        return redirect(
-            sprintf(
-                '%s?type=%s',
-                route('tasks.findById', ['id' => $taskId]),
-                $alarm instanceof SingleTaskEntity ? 'single' : 'periodic'
-            ),
-            Response::HTTP_SEE_OTHER
-        );
+        return $this->redirectToTask($taskId);
     }
 }

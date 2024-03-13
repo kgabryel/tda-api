@@ -25,9 +25,9 @@ class RequestedForActivationCode implements AsyncEvent
     public static function fromUserData(User $user): self
     {
         return new self(
-            $user->getNotificationEmail(),
+            (string)$user->getNotificationEmail(),
             $user->getNotificationLanguage(),
-            $user->getActivationCode()
+            (string)$user->getActivationCode()
         );
     }
 

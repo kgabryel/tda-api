@@ -19,7 +19,7 @@ class UserWriteRepository implements UserWriteRepositoryInterface
         $loggedUser = UserUtils::getLoggedUser();
         $uId = $loggedUser->getId();
 
-        return Cache::remember(UserManager::getCacheKey(new UserId($uId)), static function () use ($uId, $loggedUser) {
+        return Cache::remember(UserManager::getCacheKey(new UserId($uId)), static function() use ($uId, $loggedUser) {
             return new User(
                 new UserId($uId),
                 $loggedUser->getNotificationEmail(),
@@ -36,7 +36,7 @@ class UserWriteRepository implements UserWriteRepositoryInterface
     {
         $uId = $userId->getValue();
 
-        return Cache::remember(UserManager::getCacheKey($userId), function () use ($uId) {
+        return Cache::remember(UserManager::getCacheKey($userId), function() use ($uId) {
             return $this->toDomainModel(UserModel::findOrFail($uId));
         });
     }

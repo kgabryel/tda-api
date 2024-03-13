@@ -66,17 +66,17 @@ class NotificationToSend
 
         return new self(
             new UserId($notificationBuff->userId),
-            $notificationBuff->email_available,
-            $notificationBuff->notification_email,
+            $notificationBuff->emailAvailable,
+            $notificationBuff->notificationEmail,
             $notificationBuff->notification_id,
             $notificationBuff->name,
             $notificationBuff->content,
             $notificationBuff->time->format('Y-m-d H:i:s'),
-            $notifications->isEmpty() ? null : $notificationBuff->deactivation_code,
+            $notifications->isEmpty() ? null : $notificationBuff->deactivationCode,
             $notificationBuff->alarmId,
             $notificationBuff->taskId,
             $notificationBuff->groupId,
-            $notificationBuff->notification_lang,
+            $notificationBuff->notificationLang,
             $notificationBuff->notification->alarm->notifications->toArray(),
             ...$types
         );

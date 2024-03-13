@@ -61,6 +61,7 @@ class SendNotifications extends Command
         $toSend = [];
         /** @var NotificationToSend $notification */
         foreach ($notifications as $notification) {
+            /** @var NotificationTypeValue $type */
             foreach ($notification->getTypes() as $type) {
                 $toSend[] = match ($type) {
                     NotificationTypeValue::WEB => new WebNotification($notification),
@@ -70,7 +71,7 @@ class SendNotifications extends Command
             }
         }
         $toSend = array_filter($toSend, static fn(NotificationInterface $item) => $item->isAvailable());
-        array_walk($toSend, function (NotificationInterface $item) {
+        array_walk($toSend, function(NotificationInterface $item) {
             $item->send();
             $this->busUtils->setUserId($item->getUserId());
             $this->commandBus->handle(new CheckNotification($item->getNotificationId()));

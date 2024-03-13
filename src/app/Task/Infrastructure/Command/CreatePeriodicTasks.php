@@ -67,7 +67,8 @@ class CreatePeriodicTasks extends Command
                 $taskGroup->getStart(),
                 $taskGroup->getStop()
             );
-            if (!$taskGroup->hasAlarm()) {
+            $alarmsGroupId = $taskGroup->getAlarmId();
+            if ($alarmsGroupId === null) {
                 $tasks = new SingleTasksIdsList();
                 foreach ($dates->get() as $date) {
                     $taskId = new TaskId($this->uuid->getValue());
@@ -108,13 +109,14 @@ class CreatePeriodicTasks extends Command
                         $groups
                     )
                 );
-                $this->eventEmitter->emit(new AlarmsAdded($taskGroup->getAlarmId(), $groups, $dates));
+                $this->eventEmitter->emit(new AlarmsAdded($alarmsGroupId, $groups, $dates));
             }
         }
         Log::info('tasks:periodic-create', [
             'id' => $cronId,
             'finish' => true
         ]);
+
         return 0;
     }
 }

@@ -68,12 +68,12 @@ class CreateRequest extends BasicRequest
 
     public function getName(): string
     {
-        return StringUtils::trimContent($this->name);
+        return $this->name;
     }
 
     public function getText(): ?string
     {
-        return $this->get('content');
+        return StringUtils::trimContent($this->get('content'));
     }
 
     public function getInterval(): int

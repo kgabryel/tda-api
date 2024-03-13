@@ -68,7 +68,7 @@ class BookmarksController extends BaseController
 
     private function redirectToBookmark(int $id): RedirectResponse
     {
-        return redirect()->route('bookmarks.findById', ['id' => $id], Response::HTTP_SEE_OTHER);
+        return $this->redirect('bookmarks.findById', ['id' => $id]);
     }
 
     public function delete(int $id): Response
@@ -78,7 +78,7 @@ class BookmarksController extends BaseController
         return $this->response->setStatusCode(Response::HTTP_NO_CONTENT);
     }
 
-    public function update($id, UpdateRequest $request): RedirectResponse
+    public function update(int $id, UpdateRequest $request): RedirectResponse
     {
         $bookmarkId = new BookmarkId($id);
         /** @var DomainModel $bookmark */

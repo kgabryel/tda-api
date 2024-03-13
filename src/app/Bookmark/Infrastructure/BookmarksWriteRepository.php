@@ -16,7 +16,7 @@ class BookmarksWriteRepository implements WriteRepository
         $bId = $bookmarkId->getValue();
         $uId = $userId->getValue();
 
-        return Cache::remember(BookmarkManager::getCacheKey($bookmarkId), static function () use ($bId, $uId) {
+        return Cache::remember(BookmarkManager::getCacheKey($bookmarkId), static function() use ($bId, $uId) {
             return BookmarkModel::where('id', '=', $bId)
                 ->where('user_id', '=', $uId)
                 ->firstOrFail()

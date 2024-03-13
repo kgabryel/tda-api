@@ -28,7 +28,7 @@ class AlarmsWriteRepository implements WriteRepository
         $aId = $alarmId->getValue();
         $uId = $userId->getValue();
 
-        return Cache::remember(AlarmManager::getCacheKey($alarmId), static function () use ($aId, $uId) {
+        return Cache::remember(AlarmManager::getCacheKey($alarmId), static function() use ($aId, $uId) {
             return Alarm::where('id', '=', $aId)
                 ->where('user_id', '=', $uId)
                 ->firstOrFail()
@@ -41,7 +41,7 @@ class AlarmsWriteRepository implements WriteRepository
         $aId = $alarmId->getValue();
         $uId = $userId->getValue();
 
-        return Cache::remember(AlarmManager::getCacheKey($alarmId), static function () use ($aId, $uId) {
+        return Cache::remember(AlarmManager::getCacheKey($alarmId), static function() use ($aId, $uId) {
             return AlarmGroup::where('id', '=', $aId)
                 ->where('user_id', '=', $uId)
                 ->firstOrFail()
@@ -53,7 +53,7 @@ class AlarmsWriteRepository implements WriteRepository
     {
         $uId = $userId->getValue();
 
-        return Cache::remember(AlarmManager::getCacheKey($alarmId), static function () use ($alarmId, $uId) {
+        return Cache::remember(AlarmManager::getCacheKey($alarmId), static function() use ($alarmId, $uId) {
             $alarm = Alarm::where('id', '=', $alarmId)
                 ->where('user_id', '=', $uId)
                 ->first();
@@ -73,7 +73,7 @@ class AlarmsWriteRepository implements WriteRepository
         /** @var SingleAlarm $alarm */
         $alarm = Cache::remember(
             sprintf('alarms-code-%s-%s', $code, $uId),
-            static function () use ($code, $uId) {
+            static function() use ($code, $uId) {
                 return Alarm::where('deactivation_code', '=', $code)
                     ->where('user_id', '=', $uId)
                     ->firstOrFail()
@@ -93,7 +93,7 @@ class AlarmsWriteRepository implements WriteRepository
         /** @var SingleAlarm $alarm */
         $alarm = Cache::remember(
             sprintf('alarms-notification-%s-%s', $nId, $uId),
-            static function () use ($nId, $uId) {
+            static function() use ($nId, $uId) {
                 return Alarm::select('alarms.*')
                     ->join('notifications', 'alarms.id', '=', 'notifications.alarm_id')
                     ->where('notifications.id', '=', $nId)
@@ -125,7 +125,7 @@ class AlarmsWriteRepository implements WriteRepository
     {
         return AlarmGroup::whereNull('task_id')
             ->where('active', '=', true)
-            ->where(function ($query) use ($date) {
+            ->where(function($query) use ($date) {
                 $query->whereNull('stop')->orWhere('stop', '>=', $date);
             })
             ->get()
@@ -143,10 +143,10 @@ class AlarmsWriteRepository implements WriteRepository
             'alarms.task_id as taskId',
             'alarms.group_id as groupId',
             'notifications_buff.time',
-            'alarms.deactivation_code',
-            'users.notification_email',
-            'settings.notification_lang',
-            DB::raw('users.email_verified_at is not null as email_available'),
+            'alarms.deactivationCode',
+            'users.notificationEmail',
+            'settings.notificationLang',
+            DB::raw('users.email_verified_at is not null as emailAvailable'),
             'users.id as userId'
         )
             ->with(
@@ -172,7 +172,7 @@ class AlarmsWriteRepository implements WriteRepository
         /** @var PeriodicAlarm $alarm */
         $alarm = Cache::remember(
             sprintf('alarms-notifications-group-%s-%s', $nId, $uId),
-            static function () use ($nId, $uId) {
+            static function() use ($nId, $uId) {
                 return AlarmGroup::select('alarms_groups.*')
                     ->join('notifications_groups', 'alarms_groups.id', '=', 'notifications_groups.alarm_id')
                     ->where('notifications_groups.id', '=', $nId)

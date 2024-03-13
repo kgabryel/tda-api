@@ -6,6 +6,7 @@ use App\Core\Cqrs\QueryBus;
 use App\Shared\Domain\Config;
 use App\Shared\Infrastructure\Request\BasicRequest;
 use App\Shared\Infrastructure\Rules\CorrectAlarmTaskValue;
+use App\User\Infrastructure\StringUtils;
 
 class UpdateRequest extends BasicRequest
 {
@@ -51,7 +52,7 @@ class UpdateRequest extends BasicRequest
 
     public function getText(): ?string
     {
-        return $this->get('content');
+        return StringUtils::trimContent($this->get('content'));
     }
 
     public function taskFilled(): bool

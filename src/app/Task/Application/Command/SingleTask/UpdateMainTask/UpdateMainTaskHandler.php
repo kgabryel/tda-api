@@ -9,7 +9,7 @@ use App\Shared\Domain\Entity\TaskId;
 use App\Task\Application\Command\ModifyTaskHandler;
 use App\Task\Application\Command\SingleTask\ChangeStatus\ChangeStatus;
 use App\Task\Application\Query\FindTaskStatusByName\FindTaskStatusByName;
-use App\Task\Domain\Entity\Task;
+use App\Task\Domain\Entity\SingleTask;
 use App\Task\Domain\Entity\TaskStatus;
 use App\Task\Domain\Event\SingleTask\TasksModified;
 use App\Task\Domain\Event\SingleTask\Updated;
@@ -18,7 +18,7 @@ use App\Task\Domain\Service\StatusService;
 class UpdateMainTaskHandler extends ModifyTaskHandler
 {
     private StatusService $statusService;
-    private Task $task;
+    private SingleTask $task;
     private ?TaskId $newMainTaskId;
 
     public function __construct(

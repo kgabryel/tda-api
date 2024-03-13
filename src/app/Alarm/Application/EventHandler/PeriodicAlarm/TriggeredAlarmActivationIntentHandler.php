@@ -81,6 +81,7 @@ class TriggeredAlarmActivationIntentHandler
         $dateService = DateService::get(new DateTimeImmutable(), DateService::getNextMonthEnd(), $this->alarm);
         $this->currentDate = DateService::toStartOfDay($dateService->getCurrent());
         while ($this->currentDate !== false) {
+            /** @var TaskGroup $taskGroup */
             $taskGroup = $event->getTaskGroup()?->getByTime($this->currentDate->getTimestamp());
             $singleAlarm = $this->findAlarm($taskGroup->getAlarmId());
             $task = $taskGroup->getTaskId();
@@ -112,9 +113,11 @@ class TriggeredAlarmActivationIntentHandler
     {
         $id = $taskGroup->getAlarmId();
         $this->alarms->add($id);
-        $this->alarmService->createForPeriodicAlarm(
-            CreateData::createFromPeriodicAlarm($alarm, $this->currentDate, $id, $taskGroup->getTaskId())
-        );
+        if ($this->currentDate !== false) {
+            $this->alarmService->createForPeriodicAlarm(
+                CreateData::createFromPeriodicAlarm($alarm, $this->currentDate, $id, $taskGroup->getTaskId())
+            );
+        }
     }
 
     private function modify(SingleAlarm $alarm, TaskId $taskId): void

@@ -36,6 +36,7 @@ class CheckWithNotificationHandler extends ModifyAlarmHandler
         /** @var SingleAlarm $alarm */
         $alarm = $this->queryBus->handle(new FindById($command->getAlarmId(), QueryResult::DOMAIN_MODEL));
         $this->eventEmitter->emit(new AlarmsModified($alarm->getUserId(), $alarm->getAlarmId()));
+
         return true;
     }
 }

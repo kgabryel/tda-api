@@ -16,7 +16,7 @@ class ColorsWriteRepository implements WriteRepository
         $cId = $colorId->getValue();
         $uId = $userId->getValue();
 
-        return Cache::remember(ColorManager::getCacheKey($colorId), static function () use ($cId, $uId) {
+        return Cache::remember(ColorManager::getCacheKey($colorId), static function() use ($cId, $uId) {
             return ColorModel::where('id', '=', $cId)
                 ->where('user_id', '=', $uId)
                 ->firstOrFail()

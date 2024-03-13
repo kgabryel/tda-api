@@ -4,6 +4,7 @@ namespace App\Task\Infrastructure\Request\Periodic;
 
 use App\Shared\Domain\Config;
 use App\Shared\Infrastructure\Request\BasicRequest;
+use App\User\Infrastructure\StringUtils;
 
 class UpdateRequest extends BasicRequest
 {
@@ -32,6 +33,6 @@ class UpdateRequest extends BasicRequest
 
     public function getText(): ?string
     {
-        return $this->get('content');
+        return StringUtils::trimContent($this->get('content'));
     }
 }

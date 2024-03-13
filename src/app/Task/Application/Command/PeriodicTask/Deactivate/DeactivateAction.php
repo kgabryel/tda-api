@@ -3,12 +3,14 @@
 namespace App\Task\Application\Command\PeriodicTask\Deactivate;
 
 /**
- * definiuje co ma sie stac z zadaniami pojedynczymi, ktorych data jest wieksza niz data aktualna, przy dezaktywowaniu zadania okresowego
+ * definiuje co ma sie stac z zadaniami pojedynczymi, ktorych data jest wieksza niz data aktualna,
+ * przy dezaktywowaniu zadania okresowego
  */
 enum DeactivateAction: string
 {
     /**
-     * zadania pozostaja bez zmian, dezaktywuje powiazany alarm okresowy jezeli istnieje, a pojedyncze alarmy pozostaja bez zmian
+     * zadania pozostaja bez zmian,
+     * dezaktywuje powiazany alarm okresowy jezeli istnieje, a pojedyncze alarmy pozostaja bez zmian
      */
     case NOT_MODIFY = 'notModify';
     /**
@@ -17,7 +19,8 @@ enum DeactivateAction: string
     case DELETE = 'delete';
 
     /**
-     * ustawia stasus zadan pojedynczych jako odrzucone (oprocz ukonczonych i nieukonczonych), dezaktywuje alarm okresoy i powiazane alarmy pojedyncze
+     * ustawia stasus zadan pojedynczych jako odrzucone (oprocz ukonczonych i nieukonczonych),
+     * dezaktywuje alarm okresoy i powiazane alarmy pojedyncze
      */
     case REJECT = 'reject';
 

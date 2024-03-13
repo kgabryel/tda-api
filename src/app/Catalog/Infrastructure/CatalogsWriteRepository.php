@@ -16,7 +16,7 @@ class CatalogsWriteRepository implements WriteRepository
         $cId = $catalogId->getValue();
         $uId = $userId->getValue();
 
-        return Cache::remember(CatalogManager::getCacheKey($catalogId), static function () use ($cId, $uId) {
+        return Cache::remember(CatalogManager::getCacheKey($catalogId), static function() use ($cId, $uId) {
             return CatalogModel::where('id', '=', $cId)
                 ->where('user_id', '=', $uId)
                 ->firstOrFail()

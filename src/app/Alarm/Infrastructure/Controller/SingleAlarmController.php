@@ -45,20 +45,24 @@ class SingleAlarmController extends BaseController
                     $request->getName(),
                     $request->getText(),
                     new CatalogsIdsList(
-                        ...array_map(static fn(string $id) => new CatalogId($id), $request->getCatalogs())
+                        ...array_map(static fn(int $id) => new CatalogId($id), $request->getCatalogs())
                     )
                 ),
                 new Notifications(new AlarmId($id), ...$request->getNotifications())
             )
         );
 
-        return redirect(
+        return $this->redirectToAlarm($id);
+    }
+
+    private function redirectToAlarm(string $id): RedirectResponse
+    {
+        return $this->redirect(
             sprintf(
                 '%s?type=%s',
                 route('alarms.findById', ['id' => $id]),
                 AlarmType::SINGLE_ALARM->value
-            ),
-            Response::HTTP_SEE_OTHER
+            )
         );
     }
 
@@ -79,14 +83,7 @@ class SingleAlarmController extends BaseController
             abort(400);
         }
 
-        return redirect(
-            sprintf(
-                '%s?type=%s',
-                route('alarms.findById', ['id' => $id]),
-                AlarmType::SINGLE_ALARM->value
-            ),
-            Response::HTTP_SEE_OTHER
-        );
+        return $this->redirectToAlarm($id);
     }
 
     public function deactivate(DeactivateRequest $request): RedirectResponse|Response
@@ -94,14 +91,7 @@ class SingleAlarmController extends BaseController
         /** @var SingleAlarm $alarm */
         $alarm = $this->queryBus->handle(new FindByCode($request->getCode()));
         if ($this->commandBus->handleWithResult(new CheckWithNotification($alarm->getAlarmId()))) {
-            return redirect(
-                sprintf(
-                    '%s?type=%s',
-                    route('alarms.findById', ['id' => $alarm->getAlarmId()]),
-                    AlarmType::SINGLE_ALARM->value
-                ),
-                Response::HTTP_SEE_OTHER
-            );
+            return $this->redirectToAlarm($alarm->getAlarmId()->getValue());
         }
 
         return $this->response->setStatusCode(Response::HTTP_NO_CONTENT);
@@ -110,14 +100,7 @@ class SingleAlarmController extends BaseController
     public function check(string $id): RedirectResponse|Response
     {
         if ($this->commandBus->handleWithResult(new CheckWithNotification(new AlarmId($id)))) {
-            return redirect(
-                sprintf(
-                    '%s?type=%s',
-                    route('alarms.findById', ['id' => $id]),
-                    AlarmType::SINGLE_ALARM->value
-                ),
-                Response::HTTP_SEE_OTHER
-            );
+            return $this->redirectToAlarm($id);
         }
 
         return $this->response->setStatusCode(Response::HTTP_NO_CONTENT);
@@ -139,27 +122,13 @@ class SingleAlarmController extends BaseController
             )
         );
 
-        return redirect(
-            sprintf(
-                '%s?type=%s',
-                route('alarms.findById', ['id' => $id]),
-                AlarmType::SINGLE_ALARM->value
-            ),
-            Response::HTTP_SEE_OTHER
-        );
+        return $this->redirectToAlarm($id);
     }
 
     public function uncheck(string $id): RedirectResponse|Response
     {
         if ($this->commandBus->handleWithResult(new Uncheck(new AlarmId($id)))) {
-            return redirect(
-                sprintf(
-                    '%s?type=%s',
-                    route('alarms.findById', ['id' => $id]),
-                    AlarmType::SINGLE_ALARM->value
-                ),
-                Response::HTTP_SEE_OTHER
-            );
+            return $this->redirectToAlarm($id);
         }
 
         return $this->response->setStatusCode(Response::HTTP_NO_CONTENT);

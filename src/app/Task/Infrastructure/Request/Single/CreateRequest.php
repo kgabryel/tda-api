@@ -88,11 +88,11 @@ class CreateRequest extends BasicRequest
             StringUtils::trimContent($this->task['content']),
             $this->task['date'] !== null ? (new Carbon($this->task['date']))->toDateTimeImmutable() : null,
             $mainTask === null ? null : new TaskId($this->task['mainTask']),
-            new CatalogsIdsList(...array_map(static fn(string $id) => new CatalogId($id), $this->task['catalogs'])),
-            new NotesList(...array_map(static fn(string $id) => new NoteId($id), $this->task['notes'])),
-            new FilesList(...array_map(static fn(string $id) => new FileId($id), $this->task['files'])),
-            new VideosList(...array_map(static fn(string $id) => new VideoId($id), $this->task['videos'])),
-            new BookmarksList(...array_map(static fn(string $id) => new BookmarkId($id), $this->task['bookmarks']))
+            new CatalogsIdsList(...array_map(static fn(int $id) => new CatalogId($id), $this->task['catalogs'])),
+            new NotesList(...array_map(static fn(int $id) => new NoteId($id), $this->task['notes'])),
+            new FilesList(...array_map(static fn(int $id) => new FileId($id), $this->task['files'])),
+            new VideosList(...array_map(static fn(int $id) => new VideoId($id), $this->task['videos'])),
+            new BookmarksList(...array_map(static fn(int $id) => new BookmarkId($id), $this->task['bookmarks']))
         );
     }
 
@@ -105,7 +105,7 @@ class CreateRequest extends BasicRequest
             new AlarmId($alarmId),
             $this->alarm['name'],
             StringUtils::trimContent($this->alarm['content']),
-            new CatalogsIdsList(...array_map(static fn(string $id) => new CatalogId($id), $this->alarm['catalogs']))
+            new CatalogsIdsList(...array_map(static fn(int $id) => new CatalogId($id), $this->alarm['catalogs']))
         );
 
         $notifications = array_map(static fn(array $notification) => new Notification(

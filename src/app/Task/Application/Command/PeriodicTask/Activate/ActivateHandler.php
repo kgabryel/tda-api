@@ -10,6 +10,7 @@ use App\Shared\Application\DateService;
 use App\Shared\Application\Dto\SingleTasksIdsList;
 use App\Shared\Application\UuidInterface;
 use App\Shared\Domain\Entity\AlarmId;
+use App\Shared\Domain\Entity\AlarmsGroupId;
 use App\Shared\Domain\Entity\TaskId;
 use App\Task\Application\Command\ModifyTaskHandler;
 use App\Task\Application\Command\SingleTask\Create\Create;
@@ -42,12 +43,12 @@ class ActivateHandler extends ModifyTaskHandler
         $this->uuid = $uuid;
     }
 
-    private function activeWithAlarm(): void
+    private function activeWithAlarm(AlarmsGroupId $alarmsGroupId): void
     {
         if ($this->command->getAction() === ActivateAction::NOT_MODIFY) {
             $this->eventEmitter->emit(new Updated($this->task));
             $this->eventEmitter->emit(
-                new AlarmActivated($this->task->getAlarmId(), $this->command->getAction()->value)
+                new AlarmActivated($alarmsGroupId, $this->command->getAction()->value)
             );
 
             return;
@@ -74,9 +75,7 @@ class ActivateHandler extends ModifyTaskHandler
             $dateService->setNext();
             $currentDate = DateService::toStartOfDay($dateService->getCurrent());
         }
-        $this->eventEmitter->emit(
-            new AlarmActivated($this->task->getAlarmId(), $this->command->getAction()->value, $taskGroup)
-        );
+        $this->eventEmitter->emit(new AlarmActivated($alarmsGroupId, $this->command->getAction()->value, $taskGroup));
         $this->eventEmitter->emit(new TasksModified($this->task->getUserId(), ...$tasks->get()));
     }
 
@@ -88,19 +87,16 @@ class ActivateHandler extends ModifyTaskHandler
             return false;
         }
         $this->eventEmitter->emit(new Updated($this->task));
-
-        if ($command->getAction() === ActivateAction::NOT_MODIFY) {
-            $alarmId = $this->task->getAlarmId();
-            if ($alarmId === null) {
-                return true;
-            }
+        $alarmId = $this->task->getAlarmId();
+        if ($alarmId === null && $command->getAction() === ActivateAction::NOT_MODIFY) {
+            return true;
         }
         $this->tasksInFuture = $this->task->getTasksInFuture();
         $this->tasks = $this->tasksInFuture->get();
-        if (!$this->task->hasAlarm()) {
+        if ($alarmId === null) {
             $this->activeWithoutAlarm();
         } else {
-            $this->activeWithAlarm();
+            $this->activeWithAlarm($alarmId);
         }
 
         return true;

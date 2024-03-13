@@ -20,7 +20,7 @@ class UpdateContent extends ModifyPeriodicAlarmCommand
         $this->content = $content;
     }
 
-    public function getContent(): string
+    public function getContent(): ?string
     {
         return $this->content;
     }

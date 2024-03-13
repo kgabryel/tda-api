@@ -31,7 +31,7 @@ class EmailChanged implements AsyncEvent
             $user->getUserId(),
             $user->getNotificationEmail(),
             $user->getNotificationLanguage(),
-            $user->getActivationCode()
+            (string)$user->getActivationCode()
         );
     }
 

@@ -17,3 +17,5 @@
 /docker/ssl/localhost.*
 /src/public/css/*/*.css
 /src/public/css/*/*.css.map
+
+/src/.phpcs-cache

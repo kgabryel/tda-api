@@ -70,6 +70,7 @@ class CreatePeriodicAlarms extends Command
             'id' => $cronId,
             'finish' => true
         ]);
+
         return 0;
     }
 }

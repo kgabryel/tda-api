@@ -7,6 +7,7 @@ use App\User\Application\Query\SearchByFacebookId\SearchByFacebookId;
 use App\User\Domain\Entity\FacebookId;
 use DateInterval;
 use Laravel\Passport\Bridge\User;
+use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Grant\AbstractGrant;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
@@ -47,6 +48,7 @@ class FacebookGrant extends AbstractGrant
             $user->getIdentifier(),
             $scopes
         );
+        /** @var RefreshTokenEntityInterface $refreshToken */
         $refreshToken = $this->issueRefreshToken($accessToken);
         // Inject tokens into response
         $responseType->setAccessToken($accessToken);

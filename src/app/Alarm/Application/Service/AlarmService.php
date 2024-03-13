@@ -39,7 +39,7 @@ class AlarmService
         }
         $alarmDto->setDate($createDataDto->getDate());
         $alarmDto->setAlarmsGroupId($createDataDto->getAlarmsGroupId());
-        $times = AlarmService::mapGroupsToNotifications($createDataDto->getGroups(), $createDataDto->getDate());
+        $times = self::mapGroupsToNotifications($createDataDto->getGroups(), $createDataDto->getDate());
         $notifications = new Notifications($id, ...$times->get());
         $this->commandBus->handle(new Create($alarmDto, $notifications, true));
 

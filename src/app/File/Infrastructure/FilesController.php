@@ -57,8 +57,8 @@ class FilesController extends BaseController
             $request->getName(),
             $request->isAssignedToDashboard(),
             new UploadedFile($request->getFile()),
-            new CatalogsIdsList(...array_map(static fn(int $id) => new CatalogId($id), $request->getCatalogs())),
-            new TasksIdsList(...$request->getTasks())
+            new CatalogsIdsList(...array_map(static fn(int $id) => new CatalogId($id), $request->getCatalogs() ?? [])),
+            new TasksIdsList(...$request->getTasks() ?? [])
         );
 
         /** @var FileId $id */
@@ -69,7 +69,7 @@ class FilesController extends BaseController
 
     private function redirectToFile(int $id): RedirectResponse
     {
-        return redirect()->route('files.findById', ['id' => $id], Response::HTTP_SEE_OTHER);
+        return $this->redirect('files.findById', ['id' => $id]);
     }
 
     public function update(int $id, UpdateRequest $request): RedirectResponse
@@ -83,13 +83,13 @@ class FilesController extends BaseController
         }
 
         if ($request->tasksFilled()) {
-            $this->commandBus->handle(new UpdateTasks($fileId, ...$request->getTasks()));
+            $this->commandBus->handle(new UpdateTasks($fileId, ...$request->getTasks() ?? []));
         }
         if ($request->catalogsFilled()) {
             $this->commandBus->handle(
                 new UpdateCatalogs(
                     $fileId,
-                    ...array_map(static fn(int $id) => new CatalogId($id), $request->getCatalogs())
+                    ...array_map(static fn(int $id) => new CatalogId($id), $request->getCatalogs() ?? [])
                 )
             );
         }

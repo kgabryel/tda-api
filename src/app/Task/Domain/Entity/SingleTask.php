@@ -147,7 +147,7 @@ class SingleTask extends Task
             throw new AssignedTaskModified();
         }
 
-        return parent::updateName($content);
+        return parent::updateContent($content);
     }
 
     public function updateName(string $name): bool

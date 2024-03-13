@@ -21,10 +21,11 @@ class StatusService
         if ($taskStatus === TaskStatus::IN_PROGRESS || $taskStatus === TaskStatus::BLOCKED) {
             return false;
         }
-        if ($taskStatus === TaskStatus::TO_DO && in_array($subtaskStatus, [TaskStatus::UNDONE, TaskStatus::REJECTED])) {
+        $subtaskUndone = in_array($subtaskStatus, [TaskStatus::UNDONE, TaskStatus::REJECTED], true);
+        if ($taskStatus === TaskStatus::TO_DO && $subtaskUndone) {
             return false;
         }
-        if (TaskStatus::DONE && $subtaskStatus === TaskStatus::REJECTED) {
+        if ($taskStatus === TaskStatus::DONE && $subtaskStatus === TaskStatus::REJECTED) {
             return false;
         }
         if ($taskStatus === TaskStatus::TO_DO || $taskStatus === TaskStatus::DONE) {

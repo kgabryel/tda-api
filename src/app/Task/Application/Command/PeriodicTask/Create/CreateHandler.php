@@ -57,7 +57,7 @@ class CreateHandler extends AssignedUserCommandHandler
             $taskDto->getStop()
         );
         $taskGroup = $this->taskManager->createPeriodicTask($taskDto, $this->userId);
-        $taskGroupDto = $command->getAlarm() === null ? null : new TasksGroupsList($taskGroup->getTaskId());
+        $taskGroupDto = $alarmDto === null ? null : new TasksGroupsList($taskGroup->getTaskId());
         $tasks = new SingleTasksIdsList();
         foreach ($dates->get() as $date) {
             $taskId = new TaskId($this->uuid->getValue());
@@ -67,7 +67,7 @@ class CreateHandler extends AssignedUserCommandHandler
             $singleTaskDto->setTasksGroupId($taskGroup->getTaskId());
             $this->commandBus->handle(new CreateSingleTask($singleTaskDto));
         }
-        if ($alarmDto !== null) {
+        if ($alarmDto !== null && $taskGroupDto !== null) {
             $a = new AlarmDtoAlarm(
                 new AlarmsGroupId($this->uuid->getValue()),
                 $alarmDto->getName(),
@@ -79,7 +79,7 @@ class CreateHandler extends AssignedUserCommandHandler
                 $taskDto->getIntervalType()
             );
             $this->eventEmitter->emit(
-                new PeriodicAlarmAdded($a, $command->getAlarm()->getNotifications(), $taskGroupDto)
+                new PeriodicAlarmAdded($a, $alarmDto->getNotifications(), $taskGroupDto)
             );
         }
         $this->eventEmitter->emit(new Created($taskGroup));

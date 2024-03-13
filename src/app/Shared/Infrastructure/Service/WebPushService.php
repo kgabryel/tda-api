@@ -2,8 +2,10 @@
 
 namespace App\Shared\Infrastructure\Service;
 
+use App\Shared\Application\Service\TranslationServiceInterface;
 use App\Shared\Application\Service\WebPushServiceInterface;
 use App\Shared\Domain\Entity\AlarmId;
+use App\User\Domain\Entity\AvailableLanguage;
 use Ds\Queue;
 use Minishlink\WebPush\Subscription;
 use Minishlink\WebPush\WebPush;
@@ -14,9 +16,11 @@ class WebPushService implements WebPushServiceInterface
     private WebPush $webPush;
     private Queue $notifications;
     private string $publicKey;
+    private TranslationServiceInterface $translationService;
 
-    public function __construct()
+    public function __construct(TranslationServiceInterface $translationService)
     {
+        $this->translationService = $translationService;
         $this->iconHref = sprintf('%s/assets/images/favicon.ico', env('FRONT_URL'));
         $this->publicKey = env('WEB_NOTIFICATIONS_PUB');
         $this->notifications = new Queue();
@@ -42,13 +46,19 @@ class WebPushService implements WebPushServiceInterface
         $actions = [
             [
                 'action' => 'goToAlarm',
-                'title' => __('translations.goToAlarm', [], $lang)
+                'title' => $this->translationService->getTranslation(
+                    'translations.goToAlarm',
+                    AvailableLanguage::from($lang)
+                )
             ]
         ];
         if ($deactivationCode !== null) {
             $actions[] = [
                 'action' => 'deactivate',
-                'title' => __('translations.deactivateAlarm', [], $lang)
+                'title' => $this->translationService->getTranslation(
+                    'translations.deactivateAlarm',
+                    AvailableLanguage::from($lang)
+                )
             ];
         }
         $this->notifications->push(
@@ -95,7 +105,7 @@ class WebPushService implements WebPushServiceInterface
             array_filter(
                 explode(
                     '\n',
-                    strip_tags(preg_replace('/<\/[a-z]+>/', '\n', $content))
+                    strip_tags(preg_replace('/<\/[a-z]+>/', '\n', $content) ?? '')
                 ),
                 static fn(string $value) => $value !== ''
             )
@@ -123,7 +133,10 @@ class WebPushService implements WebPushServiceInterface
                 'subscription' => $this->getSubscription($endpoint, $auth, $p256dh),
                 'payload' => json_encode([
                     'notification' => [
-                        'title' => __('translations.notificationsActivated', [], $lang),
+                        'title' => $this->translationService->getTranslation(
+                            'translations.notificationsActivated',
+                            AvailableLanguage::from($lang)
+                        ),
                         'icon' => $this->iconHref
                     ]
                 ], JSON_THROW_ON_ERROR)

@@ -29,7 +29,7 @@ class TasksStatusesRepository implements TasksStatusesReadRepositoryInterface, T
     {
         $sId = $statusId->getValue();
 
-        return Cache::remember(self::getCacheKeyWithId($statusId), static function () use ($sId) {
+        return Cache::remember(self::getCacheKeyWithId($statusId), static function() use ($sId) {
             return TaskStatus::where('id', '=', $sId)
                 ->firstOrFail()
                 ->toDomainModel();
@@ -44,7 +44,7 @@ class TasksStatusesRepository implements TasksStatusesReadRepositoryInterface, T
     public function findByName(TaskStatusName $name): DomainModel
     {
         $sName = $name->value;
-        $taskStatus = Cache::remember(sprintf('tasks-statuses-%s', $name->value), static function () use ($sName) {
+        $taskStatus = Cache::remember(sprintf('tasks-statuses-%s', $name->value), static function() use ($sName) {
             return TaskStatus::where('name', '=', $sName)
                 ->firstOrFail()
                 ->toDomainModel();

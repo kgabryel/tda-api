@@ -30,7 +30,7 @@ class UserController extends BaseController
     {
         $this->commandBus->handle(new ChangeEmail($request->getEmail()));
 
-        return redirect(route('settings.getEmailState'), Response::HTTP_SEE_OTHER);
+        return $this->redirect('settings.getEmailState');
     }
 
     public function getEmailState(): EmailState
@@ -71,7 +71,7 @@ class UserController extends BaseController
     public function confirmEmail(ConfirmEmailRequest $request): RedirectResponse|Response
     {
         if ($this->commandBus->handleWithResult(new ConfirmEmail($request->getCode()))) {
-            return redirect(route('settings.getEmailState'), Response::HTTP_SEE_OTHER);
+            return $this->redirect('settings.getEmailState');
         }
 
         return $this->response->setStatusCode(Response::HTTP_BAD_REQUEST);

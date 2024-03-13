@@ -7,8 +7,9 @@ use App\Shared\Application\Query\Query;
 use DateTimeImmutable;
 
 /**
- * Pobiera liste zadan okresowych, dla ktorych trzeba utworzyc pojedyncze zadania. Zadania musza byc aktywne oraz zadanie
- * musi posiadac date koncowa wieksza lub rowna niz podana w parametrze data lub data koncowa musi nie byc ustawiona.
+ * Pobiera liste zadan okresowych, dla ktorych trzeba utworzyc pojedyncze zadania.
+ * Zadania musza byc aktywne oraz zadanie musi posiadac date koncowa wieksza lub rowna niz podana w parametrze data
+ * lub data koncowa musi nie byc ustawiona.
  */
 #[QueryHandler(FindTasksToCreateQueryHandler::class)]
 class FindTasksToCreate implements Query

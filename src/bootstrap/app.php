@@ -68,9 +68,11 @@ use App\Note\Infrastructure\NoteManager;
 use App\Note\Infrastructure\NotesReadRepository;
 use App\Note\Infrastructure\NotesWriteRepository;
 use App\Shared\Application\AlarmsTypesRepository;
+use App\Shared\Application\Service\TranslationServiceInterface;
 use App\Shared\Application\Service\WebPushServiceInterface;
 use App\Shared\Application\TasksTypesRepository as TasksTypesRepositoryInterface;
 use App\Shared\Application\UuidInterface;
+use App\Shared\Infrastructure\Service\TranslationService;
 use App\Shared\Infrastructure\Service\WebPushService;
 use App\Shared\Infrastructure\Uuid;
 use App\Task\Application\Notificator as TasksNotificator;
@@ -182,6 +184,7 @@ $app->singleton(BusUtils::class);
 $app->singleton(EventBus::class);
 $app->singleton(AsyncEventBus::class);
 $app->singleton(WebPushServiceInterface::class, WebPushService::class);
+$app->singleton(TranslationServiceInterface::class, TranslationService::class);
 /*
 |--------------------------------------------------------------------------
 | Return The Application

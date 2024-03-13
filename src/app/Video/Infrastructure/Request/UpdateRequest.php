@@ -61,13 +61,13 @@ class UpdateRequest extends BasicRequest
         return $this->assignedToDashboard;
     }
 
-    public function getCatalogs(): ?array
+    public function getCatalogs(): array
     {
-        return $this->catalogs;
+        return $this->catalogs ?? [];
     }
 
-    public function getTasks(): ?array
+    public function getTasks(): array
     {
-        return $this->tasks;
+        return $this->tasks ?? [];
     }
 }

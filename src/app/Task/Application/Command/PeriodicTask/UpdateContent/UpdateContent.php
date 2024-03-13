@@ -12,7 +12,7 @@ use App\Task\Application\Command\PeriodicTask\ModifyPeriodicTaskCommand;
 #[CommandHandler(UpdateContentHandler::class)]
 class UpdateContent extends ModifyPeriodicTaskCommand
 {
-    private ?string $content;
+    private string $content;
 
     public function __construct(TasksGroupId $id, string $content)
     {

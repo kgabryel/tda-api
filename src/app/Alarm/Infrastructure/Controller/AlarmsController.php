@@ -33,7 +33,7 @@ class AlarmsController extends BaseController
         Request $request
     ): SingleAlarmEntity|SingleAlarmView|PeriodicAlarmEntity|PeriodicAlarmView {
         return $this->queryBus->handle(
-            new FindById($id, QueryResult::VIEW_MODEL, AlarmType::tryFrom($request->query('type', '')))
+            new FindById($id, QueryResult::VIEW_MODEL, AlarmType::tryFrom($this->getQueryParam($request, 'type')))
         );
     }
 
@@ -47,14 +47,14 @@ class AlarmsController extends BaseController
         return $this->queryBus->handle(new Find(...$ids));
     }
 
-    public function delete(string $id, Request $request)
+    public function delete(string $id, Request $request): Response
     {
         $alarm = $this->queryBus->handle(new FindById($id, QueryResult::DOMAIN_MODEL));
         if ($alarm instanceof SingleAlarmEntity) {
             $this->commandBus->handle(new DeleteSingleAlarm(new AlarmId($id)));
         } else {
             $this->commandBus->handle(
-                new DeletePeriodicAlarm(new AlarmsGroupId($id), $request->query('delete') === 'true')
+                new DeletePeriodicAlarm(new AlarmsGroupId($id), $this->getQueryParam($request, 'type') === 'true')
             );
         }
 
@@ -68,15 +68,20 @@ class AlarmsController extends BaseController
         } catch (AssignedAlarmModified) {
             abort(400);
         }
-        $alarm = $this->queryBus->handle(new FindById($alarmId, QueryResult::DOMAIN_MODEL));
 
-        return redirect(
+        return $this->redirectToAlarm($alarmId);
+    }
+
+    private function redirectToAlarm(string $id): RedirectResponse
+    {
+        $alarm = $this->queryBus->handle(new FindById($id, QueryResult::DOMAIN_MODEL));
+
+        return $this->redirect(
             sprintf(
                 '%s?type=%s',
-                route('alarms.findById', ['id' => $alarmId]),
-                $alarm instanceof SingleAlarmEntity ? AlarmType::SINGLE_ALARM->value : AlarmType::PERIODIC_ALARM->value
-            ),
-            Response::HTTP_SEE_OTHER
+                route('alarms.findById', ['id' => $id]),
+                $alarm instanceof SingleAlarmEntity ? 'single' : 'periodic'
+            )
         );
     }
 
@@ -87,15 +92,7 @@ class AlarmsController extends BaseController
         } catch (AssignedAlarmModified) {
             abort(400);
         }
-        $alarm = $this->queryBus->handle(new FindById($alarmId, QueryResult::DOMAIN_MODEL));
 
-        return redirect(
-            sprintf(
-                '%s?type=%s',
-                route('alarms.findById', ['id' => $alarmId]),
-                $alarm instanceof SingleAlarmEntity ? 'single' : 'periodic'
-            ),
-            Response::HTTP_SEE_OTHER
-        );
+        return $this->redirectToAlarm($alarmId);
     }
 }

@@ -12,9 +12,10 @@ class UpdateTaskHandler extends ModifyAlarmHandler
     public function handle(UpdateTask $command): void
     {
         $alarm = $this->getSingleAlarm($command->getAlarmId());
+        $alarmTaskId = $alarm->getTaskId();
         $modifiedTasks = new SingleTasksIdsList();
-        if ($alarm->hasTask()) {
-            $modifiedTasks->add($alarm->getTaskId());
+        if ($alarmTaskId !== null) {
+            $modifiedTasks->add($alarmTaskId);
         }
         if ($command->getTaskId() !== null) {
             $modifiedTasks->add($command->getTaskId());

@@ -15,6 +15,7 @@ class RegisterHandler extends CommandHandler
     private UserManagerInterface $userManager;
     private PasswordService $passwordService;
     private UuidInterface $uuid;
+
     public function __construct(
         QueryBus $queryBus,
         EventEmitter $eventEmitter,

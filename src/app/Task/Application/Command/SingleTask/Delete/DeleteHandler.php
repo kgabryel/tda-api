@@ -2,6 +2,7 @@
 
 namespace App\Task\Application\Command\SingleTask\Delete;
 
+use App\Shared\Domain\Entity\AlarmId;
 use App\Task\Application\Command\ModifyTaskHandler;
 use App\Task\Domain\Entity\SingleTask;
 use App\Task\Domain\Event\AlarmDeleted;
@@ -34,7 +35,7 @@ class DeleteHandler extends ModifyTaskHandler
             $this->modifySubtasks();
         }
         if ($alarmId !== null) {
-            $this->modifyAlarm();
+            $this->modifyAlarm($alarmId);
         }
         $this->eventEmitter->emit(new Removed($this->task));
         $this->eventEmitter->emit(new Deleted($this->task->getTaskId()));
@@ -51,9 +52,8 @@ class DeleteHandler extends ModifyTaskHandler
         $this->eventEmitter->emit(new TasksModified($this->task->getUserId(), ...$subtasks));
     }
 
-    private function modifyAlarm(): void
+    private function modifyAlarm(AlarmId $alarmId): void
     {
-        $alarmId = $this->task->getAlarmId();
         if ($this->command->deleteAlarm()) {
             $this->eventEmitter->emit(new AlarmDeleted($alarmId));
         } else {
